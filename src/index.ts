@@ -1,15 +1,19 @@
 import * as express from "express"
-import * as bodyParser from "body-parser"
-import { Request, Response } from "express"
+
+import { Request, Response  } from "express"
 import { AppDataSource } from "./data-source"
 import { Routes } from "./routes"
-import { User } from "./entity/User"
+import bodyParser = require("body-parser");
+import {upload} from "./controller/csvUploader";
+import {SitesController} from "./controller/SitesController";
+// create express app
+const app = express()
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 AppDataSource.initialize().then(async () => {
 
-    // create express app
-    const app = express()
-    app.use(bodyParser.json())
 
     // register express routes from defined application routes
     Routes.forEach(route => {
@@ -23,6 +27,20 @@ AppDataSource.initialize().then(async () => {
             }
         })
     })
+   app.use('/addsite', upload.array('csv', 12), function (req, res, next) {
+        const files = req.files
+        if (!files) {
+            const error = new Error('Please choose files')
+            return next(error)
+        }
+       SitesController.SavetoDatabase(req, res, next)
+
+
+    })
+
+
+    // app.use('/addsite', upload.array('csv', 12),SitesController.SavetoDatabase(Request,Response,NextFunction))
+
 
     // setup express app here
     // ...
@@ -44,5 +62,6 @@ AppDataSource.initialize().then(async () => {
     // )
 
     console.log("Express server has started on port 3000. Open http://localhost:3000/users to see results")
+
 
 }).catch(error => console.log(error))

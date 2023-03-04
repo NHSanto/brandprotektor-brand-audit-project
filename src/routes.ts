@@ -1,7 +1,8 @@
 import { UserController } from "./controller/UserController"
 import {SitesController} from "./controller/SitesController";
 
-export const Routes = [{
+export const Routes = [
+    {
     method: "get",
     route: "/users",
     controller: UserController,
@@ -26,11 +27,6 @@ export const Routes = [{
     route: "/users/update",
     controller: UserController,
     action: "update"
-},{
-    method: "post",
-    route: "/addsite",
-    controller: SitesController,
-    action: "save"
 },{
     method:"get",
     route:"/getAllSites",
